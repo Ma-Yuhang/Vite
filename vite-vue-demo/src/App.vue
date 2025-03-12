@@ -7,8 +7,6 @@
     <div @click="changeImg">
       <button value="spring">春</button>
       <button value="summer">夏</button>
-      <button value="autumn">秋</button>
-      <button value="winter">冬</button>
     </div>
     <div>
       <img :src="imgPath" alt="" />
@@ -24,15 +22,24 @@ const img = ref('spring')
 const changeImg = (e: Event) => {
   img.value = (e.target as HTMLButtonElement).value
 }
-const imgPath = computed(() => {
-  const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL
-  // const res = `${baseUrl}${img.value}.jpg`
-  const res = new URL(`${img.value}.jpg`, baseUrl).href
-  console.log(res)
+// const imgPath = computed(() => {
+//   const baseUrl = import.meta.env.VITE_IMAGE_BASE_URL
+//   const res = new URL(`${img.value}.jpg`, baseUrl).href
+//   console.log(res)
+//   return res
+// })
 
-  return res
+// 动态加载图片
+// 1.使用 new URL
+// const imgPath = computed(() => {
+//   return new URL(`./assets/${img.value}.jpg`, import.meta.url).href
+// })
+// 2.使用 import.meta.glob
+const imgPath = computed(() => {
+  const res = images[`./assets/${img.value}.jpg`]
+  return res as string
 })
-const styles = import.meta.glob('./assets/**/*.jpg', {
+const images = import.meta.glob('./assets/**/*.jpg', {
   eager: true,
   import: 'default',
 })
@@ -44,7 +51,7 @@ const obj = {
 console.log(get(obj, 'name'))
 console.log(get(obj, 'age'))
 console.log(get(obj, 'height'))
-console.log(styles)
+console.log(images)
 </script>
 
 <style scoped lang="scss">
